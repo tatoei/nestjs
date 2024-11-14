@@ -17,17 +17,22 @@ export class CustomerService {
     // Create a new customer
     // สร้างลูกค้าใหม่ด้วย ID ที่ไม่ซ้ำกัน (โดยการหาค่า ID ที่มากที่สุดและเพิ่มขึ้น 1)
     async create(customer: CustomerDTO): Promise<CustomerDTO> {
+        if (!customer) {
+            throw new ConflictException('Customer not found');
+        }
+
         const count = await this.CustomerModel.countDocuments();
         const newId = count + 1;  // เพิ่มIDทีละ 1
+        console.log('customer:', customer);
         const newCustomer = new this.CustomerModel({
             id: newId,
+            name: customer.name,
+            phone: customer.phone,
+            address: customer.address,
             ...customer
         });
         const savedCustomer = await newCustomer.save();
-
         return savedCustomer
-
-
     }
 
     // Find all customers
@@ -54,6 +59,7 @@ export class CustomerService {
     // Update customer by ID
     // ฟังก์ชัน update จะค้นหาลูกค้าในฐานข้อมูลตาม id ที่ระบุ
     async update(id: number, updatedCustomerDTO: CustomerDTO): Promise<CustomerDTO> {
+
         const customer = await this.CustomerModel.findOneAndUpdate(
             { id },
             { $set: updatedCustomerDTO },

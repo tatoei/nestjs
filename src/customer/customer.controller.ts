@@ -38,6 +38,7 @@ export class CustomerController {
     // ฟังก์ชันนี้ใช้สำหรับเพิ่มข้อมูลลูกค้าใหม่
     @Post()
     async addCustomer(@Body() customer: CustomerDTO): Promise<CustomerDTO> {
+        console.log('Controller:', customer);
         return this.customerService.create(customer);
 
     }
