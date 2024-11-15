@@ -8,10 +8,11 @@ import {
     Param,
     Post,
     Put,
-    Query,
 } from '@nestjs/common';
 import { CustomerDTO } from 'src/dto/customer.dto';
 import { CustomerService } from './customer.service';
+import { ApiBody } from '@nestjs/swagger';
+import { CustomerBody } from 'src/models/customer.model';
 
 // กำหนด path API ให้ Auto
 @Controller('customer')
@@ -20,12 +21,12 @@ export class CustomerController {
 
     // ฟังก์ชันนี้ใช้สำหรับดึงข้อมูลลูกค้าเฉพาะที่ตรงกับ query string
     @Get()
-    async getCustomerAll(@Query('name') customerName?: string): Promise<CustomerDTO[]> {
-        if (customerName) {
-            return this.customerService.findByCondition((customer) =>
-                customer.name.includes(customerName),
-            );
-        }
+    async getCustomerAll(): Promise<CustomerDTO[]> {
+        // if (customerName) {
+        //     return this.customerService.findByCondition((customer) =>
+        //         customer.name.includes(customerName),
+        //     );
+        // }
         return this.customerService.findAll();
     }
 
@@ -37,7 +38,9 @@ export class CustomerController {
 
     // ฟังก์ชันนี้ใช้สำหรับเพิ่มข้อมูลลูกค้าใหม่
     @Post()
+    @ApiBody({ type: CustomerBody })
     async addCustomer(@Body() customer: CustomerDTO): Promise<CustomerDTO> {
+
         console.log('Controller:', customer);
         return this.customerService.create(customer);
 
